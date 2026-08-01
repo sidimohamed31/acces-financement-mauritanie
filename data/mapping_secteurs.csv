@@ -1,0 +1,21 @@
+poste_credit;branche_va;flag
+Commerce;Commerce;
+Pêche;Pêche;
+BTP;BTP;
+Industries;Extraction;extraction
+Industries;Industries agroalimentaires;
+Industries;Autres industries manufacturières;
+Services;Transports, poste et courrier;
+Services;Restauration et hôtellerie;
+Services;Information et communication;
+Services;Activités financières et d'assurances;
+Services;Activités immobilières;
+Services;Activités spécialisées, scientifiques et techniques, soutien de bureau;
+Services;Autres activités de services;
+(non couvert);Agriculture;
+(non couvert);Elevage et chasse;
+(non couvert);Sylviculture;
+(non couvert);Electricités, eau et assainissement;
+(non couvert);Administration publique;
+(non couvert);Enseignement;
+(non couvert);Santé;

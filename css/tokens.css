@@ -1,0 +1,146 @@
+/* tokens.css — variables uniquement. Aucune règle de mise en forme ici.
+ *
+ * Deux thèmes. Le clair est la valeur par défaut ; le sombre s'applique si le
+ * système le demande, ou si l'on force data-theme sur <html>.
+ *
+ * Les deux jeux sont mesurés, pas estimés à l'œil : `node scripts/palette.js`
+ * rejoue les contrastes WCAG et les écarts de clarté. Détail dans DESIGN.md.
+ *
+ * IMPORTANT : les marques vivent désormais sur --carte, pas sur --abysse.
+ * C'est --carte qui a été validée comme surface de référence.
+ */
+
+:root {
+  /* ================= thème clair (par défaut) =========================
+     Palette dérivée de la marque : le logo est un noir plein sur blanc, donc
+     les données le sont aussi — une rampe d'encre en cinq degrés, sans teinte.
+     Il n'y a plus de couleur à confondre : la palette est sûre pour tous les
+     daltonismes par construction. Ce qui doit alors être prouvé, ce n'est plus
+     l'écart de teinte mais l'écart de CLARTÉ entre marques voisines.
+
+     Les deux pôles ne s'opposent plus par la nuance mais par la DENSITÉ :
+     le déficit est un noir plein, le surfinancement un aplat pâle cerclé de ce
+     même noir. Un seul encrier, deux façons de le poser.
+
+     Rampe, du plus dense au plus clair (contraste sur --carte · L*) :
+       immergé  21,0:1 · L*  0,0   sous-financé — aplat plein, filets, hachures
+       encre    18,3:1 · L*  6,8   texte, série dominante
+       absent   12,7:1 · L* 20,4   angles morts (toujours hachurés en plus)
+       émergé    9,0:1 · L* 28,3   ENCRE du pôle surfinancé (jamais un aplat)
+       brume     5,6:1 · L* 44,0   texte secondaire
+       connu     3,2:1 · L* 59,4   part couverte, celle qui doit s'effacer
+       aplat     1,4:1 · L* 85,9   REMPLISSAGE du pôle surfinancé, jamais du texte
+
+     --aplat est la seule valeur qui ne tient pas 3:1 sur la carte, et c'est
+     voulu : ce n'est pas elle qui rend la marque visible mais son filet en
+     --immerge. Un aplat pâle sans filet serait une faute — d'où la règle :
+     tout remplissage en --aplat porte un contour en --immerge.
+
+     Écarts entre marques qui se côtoient : aplat/immergé 85,9 · connu/absent
+     39,0 · les trois séries « agences » 13,6 et 23,6 — plancher retenu 10.
+     brume 4,7:1 sur le fond de page et sur chaque tuile.                     */
+  --abysse:  #EBECEE;   /* fond de page                     */
+  --carte:   #FFFFFF;   /* surface des cartes               */
+  --profond: #FFFFFF;   /* infobulle                        */
+  --sable:   #101619;   /* encre principale                 */
+  --brume:   #5E6A70;   /* texte secondaire                 */
+  --trait:   #DCDFE1;   /* filets, grilles                  */
+  --emerge:  #3C4649;   /* surfinancé — encre               */
+  --aplat:   #D6DADC;   /* surfinancé — remplissage cerclé  */
+  --immerge: #000000;   /* sous-financé — noir plein        */
+  --absent:  #2B3235;   /* angles morts                     */
+  --connu:   #889296;   /* part couverte, connue            */
+
+  /* Unique couleur du tableau de bord, réservée à l'écran 1 et à lui seul.
+     Elle ne marque pas une barre — les écarts resteraient alors de deux
+     couleurs différentes entre l'écran 1 et l'écran 2, qui montrent la même
+     donnée. Elle marque ce qui n'existe QUE dans l'écran 1 : la ligne de
+     parité et la zone du crédit manquant. Rouge du drapeau mauritanien,
+     5,3:1 sur la carte claire, 5,8:1 sur la sombre.                        */
+  --accent:  #CD2A3E;
+
+  /* Force du lavis des tuiles KPI. La rampe étant beaucoup plus dense que la
+     palette colorée d'avant, 18 % faisait retomber l'étiquette --brume à
+     3,94:1 sur la tuile « angles morts ». Depuis que --immerge vaut le noir
+     plein, même 10 % ne suffit plus (4,46:1) : à 8 % elle tient 4,67:1, et
+     c'est le filet à 26 % qui donne sa forme à la tuile, pas le lavis. */
+  --lavis: 8%;
+
+  --ombre: 0 1px 2px rgba(0, 0, 0, .06), 0 8px 24px rgba(0, 0, 0, .07);
+  --ombre-carte: 0 1px 2px rgba(0, 0, 0, .05), 0 4px 14px rgba(0, 0, 0, .05);
+
+  --rayon:   16px;
+  --rayon-s: 12px;
+
+  /* --- typographie ------------------------------------------------------ */
+  --display: 'Fraunces', Georgia, 'Times New Roman', serif;
+  --corps:   'Inter Tight', system-ui, -apple-system, 'Segoe UI', sans-serif;
+  --mono:    'IBM Plex Mono', ui-monospace, 'Cascadia Mono', Consolas, monospace;
+
+  --t-corps: clamp(0.95rem, 1.15vw, 1.05rem);
+  --t-petit: clamp(0.78rem, 0.95vw, 0.86rem);
+
+  /* --- rythme ----------------------------------------------------------- */
+  --marge:   clamp(0.9rem, 2.4vw, 2.25rem);
+  --largeur: 1560px;
+
+  /* --- mouvement -------------------------------------------------------- */
+  --duree-bascule: 400ms;
+  --duree-ligne:   600ms;
+  --decalage:      80ms;
+  --courbe: cubic-bezier(0.33, 0.9, 0.28, 1);
+}
+
+/* ================= thème sombre =====================================
+   La même logique, retournée : le logo s'inverse en blanc, les données aussi.
+   Le déficit devient un blanc plein, le surfinancement un aplat sombre cerclé
+   de ce blanc. Sur --carte #16191B : immergé 18,4:1 · L* 100 · encre 15,4:1
+   · L* 94,6 · absent 11,6:1 · L* 84,1 · émergé 8,3:1 · L* 76,4 · brume 6,3:1
+   · L* 63,7 · connu 3,3:1 · L* 44,9 · aplat 1,6:1 · L* 23,9 (cerclé).
+   Écarts voisins : aplat/immergé 76,1 · connu/absent 39,2 · agences 10,5
+   et 30,9.                                                                */
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme='light']) {
+    --abysse:  #0B0D0E;
+    --carte:   #16191B;
+    --profond: #16191B;
+    --sable:   #EDF0F1;
+    --brume:   #929CA1;
+    --trait:   #2A3033;
+    --emerge:  #B9C2C6;
+    --aplat:   #333B3F;
+    --immerge: #FFFFFF;
+    --absent:  #CBD3D7;
+    --connu:   #626C70;
+    --accent:  #F2685C;
+    --lavis:   10%;
+    --ombre: 0 1px 2px rgba(0, 0, 0, .34), 0 8px 24px rgba(0, 0, 0, .4);
+    --ombre-carte: 0 1px 2px rgba(0, 0, 0, .3), 0 4px 14px rgba(0, 0, 0, .28);
+  }
+}
+
+:root[data-theme='dark'] {
+  --abysse:  #0B0D0E;
+  --carte:   #16191B;
+  --profond: #16191B;
+  --sable:   #EDF0F1;
+  --brume:   #929CA1;
+  --trait:   #2A3033;
+  --emerge:  #B9C2C6;
+  --aplat:   #333B3F;
+  --immerge: #FFFFFF;
+  --absent:  #CBD3D7;
+  --connu:   #626C70;
+  --accent:  #F2685C;
+  --lavis:   10%;
+  --ombre: 0 1px 2px rgba(0, 0, 0, .34), 0 8px 24px rgba(0, 0, 0, .4);
+  --ombre-carte: 0 1px 2px rgba(0, 0, 0, .3), 0 4px 14px rgba(0, 0, 0, .28);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  :root {
+    --duree-bascule: 0ms;
+    --duree-ligne:   0ms;
+    --decalage:      0ms;
+  }
+}

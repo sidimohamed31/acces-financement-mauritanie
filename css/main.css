@@ -1,0 +1,415 @@
+@import url('../fonts/fonts.css');
+@import url('tokens.css');
+
+/* ---------------------------------------------------------------- base -- */
+
+*, *::before, *::after { box-sizing: border-box; }
+html { -webkit-text-size-adjust: 100%; }
+
+body {
+  margin: 0;
+  background: var(--abysse);
+  color: var(--sable);
+  font-family: var(--corps);
+  font-size: var(--t-corps);
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+  overflow-x: hidden;
+}
+
+h1, h2 { margin: 0; font-weight: 600; }
+p { margin: 0; }
+
+.n {
+  font-family: var(--mono);
+  font-variant-numeric: tabular-nums;
+  font-feature-settings: 'tnum' 1;
+}
+
+.wrap { max-width: var(--largeur); margin-inline: auto; padding-inline: var(--marge); }
+
+:focus-visible { outline: 2px solid var(--immerge); outline-offset: 2px; border-radius: 4px; }
+
+.only-sr {
+  position: absolute; width: 1px; height: 1px;
+  padding: 0; margin: -1px; overflow: hidden;
+  clip: rect(0 0 0 0); white-space: nowrap; border: 0;
+}
+
+/* ------------------------------------------------------ barre de nav -- */
+
+.nav-hote { position: sticky; top: 0; z-index: 40; padding-top: clamp(0.6rem, 1.4vh, 1rem); }
+
+/* La boîte visuelle est portée par .barre et non plus par .nav : elle contient
+   deux choses de nature différente — les contrôles, qui sont de la navigation,
+   et le thème, qui n'en est pas. */
+.barre {
+  background: var(--carte);
+  border: 1px solid var(--trait);
+  border-radius: var(--rayon);
+  box-shadow: var(--ombre-carte);
+  padding: 0.7rem clamp(0.8rem, 1.6vw, 1.25rem) 0.6rem;
+}
+
+.nav {
+  display: flex;
+  align-items: center;
+  gap: clamp(0.75rem, 2vw, 1.75rem);
+  flex-wrap: wrap;
+}
+
+/* Centré sur la barre entière, pas sur l'espace laissé libre par les contrôles :
+   le filet le sépare de la ligne de commandes sans ajouter de surface. */
+.barre-theme {
+  margin-top: 0.6rem;
+  padding-top: 0.55rem;
+  border-top: 1px solid var(--trait);
+  text-align: center;
+  font-size: var(--t-petit);
+  color: var(--brume);
+  text-wrap: balance;
+}
+.barre-theme strong { color: var(--sable); font-weight: 600; }
+
+.marque { display: flex; align-items: center; gap: 0.6rem; font-weight: 600; letter-spacing: -0.01em; }
+/* Le logo remplace la pastille colorée du modèle : une marque réelle se pose
+   nue, sans jeton de couleur derrière elle qui la ferait passer pour une icône. */
+.marque-logo { width: 28px; height: 28px; flex: none; display: block; object-fit: contain; }
+
+/* Encre noire sur fond transparent : en thème sombre on l'inverse plutôt que
+   d'entretenir deux fichiers qui finiraient par diverger. */
+:root[data-theme='dark'] .marque-logo { filter: invert(1); }
+
+/* Les filtres remplacent les rubriques de navigation du modèle. */
+.filtres { display: flex; align-items: center; gap: clamp(0.4rem, 1.2vw, 1.1rem); flex-wrap: wrap; }
+
+.filtre { display: flex; align-items: center; gap: 0.45rem; }
+.filtre > label { font-size: var(--t-petit); color: var(--brume); white-space: nowrap; }
+
+/* <select> natif plutôt qu'un menu maison : accessible et sans surprise au
+   clavier. Le chevron est dessiné en fond, l'apparence système retirée. */
+.filtre select {
+  appearance: none;
+  font: inherit;
+  font-size: var(--t-petit);
+  font-weight: 500;
+  color: var(--sable);
+  background-color: transparent;
+  background-image:
+    linear-gradient(45deg, transparent 50%, currentColor 50%),
+    linear-gradient(135deg, currentColor 50%, transparent 50%);
+  background-position: right 10px center, right 5px center;
+  background-size: 5px 5px, 5px 5px;
+  background-repeat: no-repeat;
+  border: 1px solid var(--trait);
+  border-radius: 999px;
+  padding: 0.32em 1.6em 0.32em 0.8em;
+  cursor: pointer;
+  transition: border-color 150ms, background-color 150ms;
+}
+.filtre select:hover { border-color: var(--immerge); }
+.filtre select option { color: var(--sable); background: var(--carte); }
+
+.nav-actions { margin-left: auto; display: flex; gap: 0.5rem; }
+
+.lien {
+  appearance: none;
+  border: 1px solid var(--trait);
+  border-radius: 999px;
+  background: transparent;
+  padding: 0.34em 0.9em;
+  font-family: var(--mono);
+  font-size: var(--t-petit);
+  color: var(--brume);
+  cursor: pointer;
+  transition: color 150ms, border-color 150ms;
+}
+.lien:hover { color: var(--sable); border-color: var(--immerge); }
+
+/* ------------------------------------------------------ titre de page -- */
+
+.page-tete {
+  display: flex; align-items: flex-end; justify-content: space-between;
+  gap: 1.5rem; flex-wrap: wrap;
+  padding-block: clamp(1.1rem, 2.6vh, 1.9rem) clamp(0.9rem, 2vh, 1.3rem);
+}
+.page-tete h1 {
+  font-family: var(--display);
+  font-variation-settings: 'opsz' 110, 'SOFT' 20, 'WONK' 1;
+  font-size: clamp(1.5rem, 2.8vw, 2.2rem);
+  line-height: 1.05; letter-spacing: -0.015em;
+}
+.page-tete .sous { color: var(--brume); font-size: var(--t-petit); margin-top: 0.35rem; }
+
+/* Couverture des sources : sans elle, on croit que 2017 est un choix, alors que
+   c'est la dernière année disponible dans les comptes nationaux. */
+.couv-src {
+  display: inline-flex; align-items: center; gap: 0.5rem;
+  background: var(--carte);
+  border: 1px solid var(--trait);
+  border-radius: 999px;
+  padding: 0.4em 0.95em;
+  font-family: var(--mono); font-size: 0.72rem; color: var(--brume);
+}
+
+/* ------------------------------------------------------------------ KPI -- */
+
+.kpis {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 180px), 1fr));
+  gap: clamp(0.6rem, 1.2vw, 1rem);
+  margin-bottom: clamp(0.9rem, 1.8vw, 1.35rem);
+}
+
+/* Tuile teintée, chiffre en encre : la couleur pleine sur son propre lavis ne
+   tenait que 3,99:1, insuffisant pour du texte. La teinte reste sur la tuile. */
+.kpi {
+  background: color-mix(in srgb, var(--k, var(--connu)) var(--lavis), var(--carte));
+  border: 1px solid color-mix(in srgb, var(--k, var(--connu)) 26%, var(--carte));
+  border-radius: var(--rayon);
+  padding: 0.95rem 1.05rem 1rem;
+  display: flex; flex-direction: column; gap: 0.55rem;
+  min-width: 0;
+}
+.kpi.haut { --k: var(--emerge); }
+.kpi.bas  { --k: var(--immerge); }
+.kpi.void { --k: var(--absent); }
+
+/* La seule tuile colorée, et la seule entorse au confinement de l'accent à
+   l'écran 1 : elle chiffre la zone hachurée elle-même. Même quantité, même
+   couleur — sinon le chiffre-titre et le graphique héros ne se parlent pas.
+   Mesuré : chiffre 4,7:1 sur sa tuile (clair) et 5,1:1 (sombre), icône 3,5:1
+   et 3,9:1 sur sa pastille — au-dessus du seuil des éléments graphiques. */
+.kpi.manque { --k: var(--accent); }
+.kpi.manque .v { color: var(--accent); }
+.kpi.manque .badge { color: var(--accent); }
+
+/* Chaque tuile ouvre le détail de son chiffre : même contenu au survol, au
+   toucher et au focus clavier. Le relief reste discret — c'est une invitation,
+   pas un bouton. */
+.kpi {
+  cursor: default;
+  transition: transform 160ms var(--courbe), border-color 160ms linear,
+              box-shadow 160ms linear;
+}
+.kpi:hover, .kpi:focus-visible {
+  transform: translateY(-2px);
+  border-color: color-mix(in srgb, var(--k, var(--connu)) 55%, var(--carte));
+  box-shadow: var(--ombre-carte);
+}
+@media (prefers-reduced-motion: reduce) {
+  .kpi:hover, .kpi:focus-visible { transform: none; }
+}
+
+/* L'icône est en encre et non dans la teinte de la tuile : --connu ne tient
+   que 2,2:1 sur son propre lavis à 26 %, et la rampe est trop dense pour que
+   chaque jeton reste lisible sur lui-même. La teinte reste sur le fond. */
+.kpi .badge {
+  width: 30px; height: 30px; border-radius: 9px;
+  display: grid; place-items: center;
+  background: color-mix(in srgb, var(--k, var(--connu)) 26%, var(--carte));
+  color: var(--sable);
+}
+.kpi .badge svg { width: 15px; height: 15px; display: block; }
+
+.kpi .v {
+  font-family: var(--mono);
+  font-size: clamp(1.45rem, 2.5vw, 2rem);
+  line-height: 1; font-weight: 500; letter-spacing: -0.03em;
+  color: var(--sable);
+}
+.kpi .l { font-size: 0.74rem; color: var(--brume); line-height: 1.35; }
+
+/* --------------------------------------------------------------- grille -- */
+
+.grille {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 560px), 1fr));
+  gap: clamp(0.6rem, 1.2vw, 1rem);
+}
+
+.carte {
+  background: var(--carte);
+  border: 1px solid var(--trait);
+  border-radius: var(--rayon);
+  box-shadow: var(--ombre-carte);
+  padding: clamp(1rem, 1.6vw, 1.35rem);
+  display: flex; flex-direction: column;
+  min-width: 0;
+}
+.carte.pleine { grid-column: 1 / -1; }
+
+.carte-tete { margin-bottom: 1rem; }
+.carte h2 { font-family: var(--corps); font-size: 0.95rem; font-weight: 600; letter-spacing: -0.005em; }
+
+/* L'interprétation : une phrase, chiffrée, jamais un paragraphe. */
+.lecture { margin-top: 0.35rem; font-size: var(--t-petit); color: var(--brume); line-height: 1.45; }
+.lecture .up   { color: var(--emerge); font-family: var(--mono); }
+.lecture .down { color: var(--immerge); font-family: var(--mono); }
+.lecture .void { color: var(--absent); font-family: var(--mono); }
+
+/* -------------------------------------------------------------- figures -- */
+
+figure { margin: 0; }
+svg { display: block; width: 100%; height: auto; overflow: visible; }
+
+.axe    { font-family: var(--mono); font-size: 11px; fill: var(--brume); }
+.nom    { font-family: var(--corps); font-size: 13px; font-weight: 500; fill: var(--sable); }
+.val    { font-family: var(--mono); font-size: 12px; fill: var(--sable); }
+.grille-l { stroke: var(--trait); stroke-width: 1; }
+/* Seule ligne colorée du tableau de bord. Elle porte l'argument de l'écran 1 :
+   au-dessus, le crédit dépasse le poids économique ; en dessous, il manque. */
+.ligne-parite { stroke: var(--accent); stroke-width: 2; }
+
+/* Les couleurs des marques passent par des classes, jamais par un attribut fill
+   figé : le changement de thème est alors purement CSS, sans redessiner.
+   --fond vaut la CARTE, pas la page : c'est là que vivent les graphiques. */
+/* Règle non négociable : un remplissage en --aplat porte toujours un contour
+   en --immerge. Seul, il ne tient que 1,4:1 sur la carte. */
+.f-aplat   { fill: var(--aplat); }
+.f-accent  { fill: var(--accent); }
+.s-accent  { stroke: var(--accent); }
+.f-emerge  { fill: var(--emerge); }
+.f-immerge { fill: var(--immerge); }
+.f-absent  { fill: var(--absent); }
+.f-connu   { fill: var(--connu); }
+.f-sable   { fill: var(--sable); }
+.f-brume   { fill: var(--brume); }
+.f-fond    { fill: var(--carte); }
+.s-emerge  { stroke: var(--emerge); }
+.s-immerge { stroke: var(--immerge); }
+.s-absent  { stroke: var(--absent); }
+.s-connu   { stroke: var(--connu); }
+.s-sable   { stroke: var(--sable); }
+.s-brume   { stroke: var(--brume); }
+.s-trait   { stroke: var(--trait); }
+.s-fond    { stroke: var(--carte); }
+
+.mark {
+  transition: x var(--duree-bascule) var(--courbe),
+              y var(--duree-bascule) var(--courbe),
+              width var(--duree-bascule) var(--courbe),
+              height var(--duree-bascule) var(--courbe),
+              fill var(--duree-bascule) var(--courbe);
+}
+.moveable {
+  transition: transform var(--duree-bascule) var(--courbe),
+              opacity var(--duree-bascule) var(--courbe);
+}
+
+/* --------------------------------------------------------- interaction -- */
+
+.hit { fill: transparent; cursor: pointer; outline: none; }
+.hit:focus-visible + .surbrillance,
+.hit:hover + .surbrillance { opacity: 1; }
+
+.surbrillance {
+  opacity: 0; fill: none;
+  stroke: var(--sable); stroke-width: 2;
+  pointer-events: none;
+  transition: opacity 120ms linear;
+}
+
+.viseur { pointer-events: none; opacity: 0; transition: opacity 120ms linear; }
+.viseur.actif { opacity: 1; }
+
+#infobulle {
+  position: fixed; z-index: 60; pointer-events: none;
+  opacity: 0; transform: translateY(3px);
+  transition: opacity 120ms linear, transform 120ms linear;
+  background: var(--profond);
+  border: 1px solid var(--trait);
+  box-shadow: var(--ombre);
+  border-radius: var(--rayon-s);
+  padding: 0.65rem 0.8rem;
+  min-width: 172px; max-width: 280px;
+}
+#infobulle.visible { opacity: 1; transform: translateY(0); }
+#infobulle .ti { font-size: 0.8rem; font-weight: 600; color: var(--sable); margin-bottom: 0.45rem; }
+#infobulle dl { margin: 0; display: grid; grid-template-columns: auto 1fr; gap: 0.22rem 0.6rem; align-items: baseline; }
+/* La valeur mène, l'étiquette suit : le lecteur a la série, il veut le nombre. */
+#infobulle dt { font-size: 0.72rem; color: var(--brume); display: flex; align-items: center; gap: 0.4rem; }
+#infobulle dt i { width: 11px; height: 2px; border-radius: 1px; flex: none; }
+#infobulle dd {
+  margin: 0; text-align: right;
+  font-family: var(--mono); font-variant-numeric: tabular-nums;
+  font-size: 0.8rem; font-weight: 500; color: var(--sable);
+}
+
+/* --------------------------------------------------------------- donuts -- */
+
+/* Figures carrées : bornées et centrées, sinon leur viewBox s'étire à 2× dans
+   une demi-carte et les libellés deviennent énormes. */
+.donut-hote, #fig-lorenz { max-width: 430px; margin-inline: auto; width: 100%; }
+
+.donut-legende { list-style: none; margin: 0.9rem 0 0; padding: 0; display: grid; gap: 0.5rem; }
+.donut-legende li { display: grid; grid-template-columns: auto 1fr auto; gap: 0.6rem; align-items: baseline; }
+.donut-legende .puce { width: 11px; height: 11px; border-radius: 3px; margin-top: 0.25rem; }
+
+/* Un angle mort est hachuré sur la couronne : la pastille doit l'être aussi,
+   sinon la légende annonce un aplat que le graphique ne montre nulle part.
+   Mêmes ingrédients que le secteur — lavis ténu, hachure à 45°, filet plein. */
+.donut-legende .puce-hach {
+  background:
+    repeating-linear-gradient(45deg, var(--absent) 0 1.6px, transparent 1.6px 4.6px),
+    color-mix(in srgb, var(--absent) 30%, var(--carte));
+  box-shadow: inset 0 0 0 1px var(--absent);
+}
+.donut-legende .nom-part { font-size: 0.78rem; color: var(--sable); line-height: 1.3; }
+.donut-legende .mru { display: block; color: var(--brume); font-family: var(--mono); font-size: 0.72rem; }
+.donut-legende .part {
+  font-family: var(--mono); font-variant-numeric: tabular-nums;
+  font-size: 0.88rem; font-weight: 500; white-space: nowrap;
+}
+
+/* --------------------------------------------------------------- annexe -- */
+
+.annexe {
+  margin-block: clamp(0.6rem, 1.2vw, 1rem) 3rem;
+  background: var(--carte);
+  border: 1px solid var(--trait);
+  border-radius: var(--rayon);
+  box-shadow: var(--ombre-carte);
+}
+.annexe summary {
+  cursor: pointer; padding: 1rem clamp(1rem, 1.6vw, 1.35rem);
+  font-family: var(--mono); font-size: var(--t-petit); color: var(--brume);
+  border-radius: var(--rayon);
+}
+.annexe summary:hover { color: var(--sable); }
+.annexe-in { display: grid; gap: 2rem; padding: 0 clamp(1rem, 1.6vw, 1.35rem) 1.5rem; }
+
+.tbl { border-collapse: collapse; width: 100%; font-size: var(--t-petit); }
+.tbl caption { text-align: left; color: var(--brume); padding-bottom: 0.7rem; font-size: 0.78rem; }
+.tbl th, .tbl td { padding: 0.45rem 1rem 0.45rem 0; border-bottom: 1px solid var(--trait); text-align: right; vertical-align: top; }
+.tbl th:first-child, .tbl td:first-child { text-align: left; }
+.tbl th { color: var(--brume); font-weight: 500; }
+.tbl td.num { font-family: var(--mono); font-variant-numeric: tabular-nums; }
+.corresp th, .corresp td { text-align: left; }
+/* --absent est désormais une encre presque pleine : la couleur seule ne
+   distingue plus une branche orpheline. L'italique reprend le relais. */
+.corresp .orphelin td { color: var(--absent); font-style: italic; }
+
+.limites { margin: 0; padding-left: 1.1rem; display: grid; gap: 0.55rem; font-size: var(--t-petit); color: var(--brume); }
+.limites strong { color: var(--sable); font-weight: 600; }
+
+.src { font-size: var(--t-petit); color: var(--brume); }
+.src code { font-family: var(--mono); color: var(--sable); }
+
+/* --------------------------------------------------------- petits écrans -- */
+
+@media (max-width: 760px) {
+  /* Les anneaux sont carrés : ils se réduisent sans rien perdre et ne doivent
+     pas hériter de la largeur plancher ci-dessous. */
+  #fig-waterfall, #fig-maturite, #fig-agences {
+    overflow-x: auto;
+    overscroll-behavior-x: contain;
+  }
+  #fig-waterfall > svg, #fig-maturite > svg, #fig-agences > svg { min-width: 560px; }
+}
+
+@media (max-width: 620px) {
+  .nav { gap: 0.6rem; }
+  .nav-actions { margin-left: 0; }
+  .filtre > label { display: none; }
+}

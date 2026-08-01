@@ -1,0 +1,259 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Le crédit suit-il l'économie ? — Mauritanie</title>
+<meta name="description" content="Le crédit bancaire mauritanien rapporté au poids économique des secteurs : écarts, maturité et angles morts.">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' fill='%230B1D26'/%3E%3Crect x='5' y='7' width='7' height='9' fill='%23F2C14E'/%3E%3Crect x='19' y='16' width='9' height='8' fill='%234FA8B8'/%3E%3Crect y='15' width='32' height='1.6' fill='%23F2C14E'/%3E%3C/svg%3E">
+<link rel="stylesheet" href="css/main.css">
+<script>
+  /* Posé avant le premier rendu : sans cela, la page clignote en clair
+     avant de basculer en sombre pour qui a choisi le sombre. */
+  (function () {
+    try {
+      var t = localStorage.getItem('theme');
+      if (t === 'dark' || t === 'light') document.documentElement.setAttribute('data-theme', t);
+    } catch (e) { /* navigation privée */ }
+  })();
+</script>
+</head>
+<body>
+
+<!-- ============================================================ barre de nav -->
+<div class="nav-hote">
+  <div class="wrap">
+   <div class="barre">
+    <nav class="nav" aria-label="Marque et hypothèses de lecture">
+
+      <span class="marque">
+        <!-- alt vide : le nom suit immédiatement en texte, l'annoncer deux fois
+             ne ferait que bavarder au lecteur d'écran. -->
+        <img class="marque-logo" src="img/openmr-logo.png" alt=""
+             width="28" height="28" decoding="async">
+        Open Community
+      </span>
+
+      <div class="filtres">
+        <div class="filtre">
+          <label for="f-annee">Année</label>
+          <select id="f-annee"></select>
+        </div>
+        <div class="filtre">
+          <label for="f-extraction">Extraction</label>
+          <select id="f-extraction">
+            <option value="incl">incluse</option>
+            <option value="excl">exclue</option>
+          </select>
+        </div>
+        <div class="filtre">
+          <label for="f-residu">Résidu 41&nbsp;%</label>
+          <!-- Libellés courts : un <select> se dimensionne sur son option la plus
+               longue et « réparti au poids économique » déséquilibrait la barre.
+               Le sens complet est porté par title= et par l'annexe. -->
+          <select id="f-residu" title="Traitement du résidu « consommation et autres » : exclu du calcul, ou réparti entre les secteurs au prorata de leur poids économique">
+            <option value="excl">exclu</option>
+            <option value="repart">réparti</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="nav-actions">
+        <button class="lien" id="theme" type="button" aria-pressed="false">mode sombre</button>
+        <button class="lien" id="reset" type="button">rétablir</button>
+      </div>
+
+    </nav>
+
+    <!-- Le thème du hackathon n'est pas de la navigation : il reste hors du
+         <nav>, sur sa propre ligne, centré sous les contrôles. -->
+    <p class="barre-theme">Thème&nbsp;: <strong>l'accès au financement et
+      l'inclusion financière</strong></p>
+   </div>
+  </div>
+</div>
+
+<main class="wrap">
+
+  <div class="page-tete">
+    <div>
+      <h1>Le crédit suit-il l'économie&nbsp;?</h1>
+      <p class="sous">Mauritanie · allocation sectorielle du crédit bancaire rapportée
+        à la valeur ajoutée</p>
+    </div>
+    <p class="couv-src" id="couv-src"></p>
+  </div>
+
+  <!-- ================================================================= KPI -->
+  <section class="kpis" aria-label="Indicateurs clés">
+    <div class="kpi haut">
+      <span class="badge" aria-hidden="true">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"
+             stroke-linecap="round" stroke-linejoin="round"><path d="M12 19V5"/><path d="m5 12 7-7 7 7"/></svg>
+      </span>
+      <span class="v n" id="k-max"></span>
+      <span class="l">indice max — <span id="k-max-l"></span></span>
+    </div>
+    <div class="kpi bas">
+      <span class="badge" aria-hidden="true">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"
+             stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14"/><path d="m19 12-7 7-7-7"/></svg>
+      </span>
+      <span class="v n" id="k-min"></span>
+      <span class="l">indice min — <span id="k-min-l"></span></span>
+    </div>
+    <!-- Seule tuile colorée : elle chiffre exactement la zone hachurée de
+         l'écran 1. Même quantité, même couleur. -->
+    <div class="kpi manque">
+      <span class="badge" aria-hidden="true">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"
+             stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/></svg>
+      </span>
+      <span class="v n" id="k-manque"></span>
+      <span class="l">manquent <span id="k-manque-l"></span></span>
+    </div>
+    <div class="kpi">
+      <span class="badge" aria-hidden="true">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"
+             stroke-linecap="round" stroke-linejoin="round"><path d="M8 7h11"/><path d="m16 4 3 3-3 3"/><path d="M16 17H5"/><path d="m8 20-3-3 3-3"/></svg>
+      </span>
+      <span class="v n" id="k-conc"></span>
+      <span class="l">de l'encours à réallouer pour suivre l'économie</span>
+    </div>
+    <div class="kpi haut">
+      <span class="badge" aria-hidden="true">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"
+             stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>
+      </span>
+      <span class="v n" id="k-ct"></span>
+      <span class="l">de l'encours à court terme</span>
+    </div>
+    <div class="kpi void">
+      <span class="badge" aria-hidden="true">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"
+             stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="m6 6 12 12"/></svg>
+      </span>
+      <span class="v n" id="k-void"></span>
+      <span class="l">du PIB sans poste de crédit</span>
+    </div>
+  </section>
+
+  <!-- =============================================================== grille -->
+  <div class="grille">
+
+    <section class="carte pleine" aria-labelledby="c1">
+      <div class="carte-tete">
+        <h2 id="c1">Crédit reçu rapporté au poids économique</h2>
+        <p class="lecture" id="i1"></p>
+      </div>
+      <figure id="fig-flottaison"></figure>
+    </section>
+
+    <section class="carte" aria-labelledby="c2">
+      <div class="carte-tete">
+        <h2 id="c2">Écart de crédit, en millions de MRU</h2>
+        <p class="lecture" id="i2"></p>
+      </div>
+      <figure id="fig-waterfall"></figure>
+    </section>
+
+    <section class="carte" aria-labelledby="c3">
+      <div class="carte-tete">
+        <h2 id="c3">Concentration de l'allocation</h2>
+        <p class="lecture" id="i3"></p>
+      </div>
+      <figure id="fig-lorenz"></figure>
+    </section>
+
+    <section class="carte" aria-labelledby="c4">
+      <div class="carte-tete">
+        <h2 id="c4">Maturité de l'encours, 2020&ndash;2021</h2>
+        <p class="lecture" id="i4"></p>
+      </div>
+      <figure id="fig-maturite"></figure>
+    </section>
+
+    <section class="carte" aria-labelledby="c5">
+      <div class="carte-tete">
+        <h2 id="c5">Agences par type d'institution, 2004&ndash;2019</h2>
+        <p class="lecture" id="i5"></p>
+      </div>
+      <figure id="fig-agences"></figure>
+    </section>
+
+    <section class="carte" aria-labelledby="c6">
+      <div class="carte-tete">
+        <h2 id="c6">Couverture du PIB par la nomenclature</h2>
+        <p class="lecture" id="i6"></p>
+      </div>
+      <figure id="fig-couv-pib" class="donut-hote"></figure>
+      <ul class="donut-legende" id="leg-couv-pib"></ul>
+    </section>
+
+    <section class="carte" aria-labelledby="c7">
+      <div class="carte-tete">
+        <h2 id="c7">Ventilation de l'encours bancaire</h2>
+        <p class="lecture" id="i7"></p>
+      </div>
+      <figure id="fig-couv-credit" class="donut-hote"></figure>
+      <ul class="donut-legende" id="leg-couv-credit"></ul>
+    </section>
+
+  </div>
+
+  <!-- =============================================================== annexe -->
+  <details class="annexe">
+    <summary>Chiffres, correspondance des nomenclatures et limites</summary>
+
+    <div class="annexe-in">
+      <table class="tbl">
+        <caption>Indice de financement relatif par secteur</caption>
+        <thead>
+          <tr>
+            <th scope="col">Secteur</th>
+            <th scope="col">Part de la VA</th>
+            <th scope="col">Part du crédit</th>
+            <th scope="col">IFR</th>
+            <th scope="col">Écart (MRU M)</th>
+          </tr>
+        </thead>
+        <tbody id="tbl-ifr"></tbody>
+      </table>
+
+      <table class="tbl corresp">
+        <caption>Correspondance entre postes de crédit et branches de valeur ajoutée</caption>
+        <thead>
+          <tr><th scope="col">Poste de crédit</th><th scope="col">Branches</th></tr>
+        </thead>
+      </table>
+
+      <ul class="limites">
+        <li><strong>Deux dates.</strong> Valeur ajoutée 2017, crédit 2020 : on compare deux
+          structures, pas deux flux datés du même moment.</li>
+        <li><strong>Six postes contre vingt branches.</strong> Sept branches n'ont aucun poste
+          de crédit correspondant.</li>
+        <li><strong>Un résidu de 41&nbsp;%.</strong> « Consommation et autres » n'est pas
+          ventilé finement ; les parts portent sur les 59&nbsp;% restants, sauf hypothèse
+          contraire choisie ci-dessus.</li>
+        <li><strong>Écarts invariants.</strong> Répartir le résidu au poids économique ne
+          déplace aucun écart en MRU : <span id="a-totaux"></span></li>
+      </ul>
+
+      <p class="src">
+        <code>Comptes Nationaux.xlsx</code> · <code>Crédit bancaire.xlsx</code> ·
+        <code>FINAN.xlsx</code> — <span id="a-genere"></span>
+      </p>
+    </div>
+  </details>
+
+</main>
+
+<script src="js/data.js"></script>
+<script src="js/lib.js"></script>
+<script src="js/scene-waterline.js"></script>
+<script src="js/scene-gap.js"></script>
+<script src="js/scene-flow.js"></script>
+<script src="js/scene-blindspots.js"></script>
+<script src="js/main.js"></script>
+</body>
+</html>
