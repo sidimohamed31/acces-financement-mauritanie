@@ -17,6 +17,10 @@
   'use strict';
 
   var IFR_MAX = 2.8;   // échelle FIXE : sinon les bascules ne comparent rien
+
+  // Libellés de provenance, produits par le pipeline : aucun nom de fichier
+  // n'est écrit ici, ils suivent DATA.meta.sources.
+  var SRC = window.DATA.meta.sources;
   var GAP = 3;
 
   // Carte pleine largeur : viewBox calé sur la largeur de rendu (~1480 px), pour
@@ -78,7 +82,9 @@
             { nom: 'part du crédit', valeur: A.pct(s.part_credit) },
             { nom: 'indice (IFR)', valeur: A.fmt(s.ifr, 2), couleur: s.ifr >= 1 ? '--emerge' : '--immerge' },
             { nom: 'écart', valeur: A.signe(s.ecart_aff) + A.NBSP + 'MRU M' }
-          ]
+          ],
+          // L'indice croise les deux classeurs : il faut nommer les deux.
+          sources: [SRC.va, SRC.credit]
         };
       });
     });

@@ -336,6 +336,19 @@ svg { display: block; width: 100%; height: auto; overflow: visible; }
   font-size: 0.8rem; font-weight: 500; color: var(--sable);
 }
 
+/* Provenance : le classeur dont la valeur est tirée. Sous un filet, en retrait
+   de taille — c'est une caution, pas une donnée de plus à lire. */
+#infobulle .prov {
+  margin-top: 0.55rem; padding-top: 0.5rem;
+  border-top: 1px solid var(--trait);
+  display: grid; gap: 0.3rem;
+}
+#infobulle .prov div { font-size: 0.66rem; line-height: 1.35; color: var(--brume); }
+#infobulle .prov b {
+  display: block; font-family: var(--mono); font-size: 0.68rem;
+  font-weight: 500; color: var(--sable);
+}
+
 /* --------------------------------------------------------------- donuts -- */
 
 /* Figures carrées : bornées et centrées, sinon leur viewBox s'étire à 2× dans

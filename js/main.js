@@ -220,6 +220,12 @@
      aurait rien à montrer, et six étapes de tabulation vides seraient une
      nuisance pour qui navigue au clavier. */
 
+  /* Provenance : les libellés viennent de DATA.meta.sources, produits par le
+     pipeline. Un chiffre sans son jeu de données est une affirmation — chaque
+     infobulle nomme donc le ou les classeurs dont sa valeur est tirée, et
+     l'indice, qui croise les deux, les nomme tous les deux. */
+  var SRC = D.meta.sources;
+
   function detailSecteur(s) {
     return [
       { nom: 'part de la VA', valeur: A.pct(s.part_va) },
@@ -232,12 +238,14 @@
   var KPIS = [
     { id: 'k-max', info: function () {
         var s = scenario().secteurs[0];
-        return { titre: 'Mieux financé que son poids — ' + s.nom, lignes: detailSecteur(s) };
+        return { titre: 'Mieux financé que son poids — ' + s.nom,
+                 lignes: detailSecteur(s), sources: [SRC.va, SRC.credit] };
       } },
 
     { id: 'k-min', info: function () {
         var sc = scenario(), s = sc.secteurs[sc.secteurs.length - 1];
-        return { titre: 'Moins financé que son poids — ' + s.nom, lignes: detailSecteur(s) };
+        return { titre: 'Moins financé que son poids — ' + s.nom,
+                 lignes: detailSecteur(s), sources: [SRC.va, SRC.credit] };
       } },
 
     { id: 'k-manque', info: function () {
@@ -251,7 +259,8 @@
             { nom: 'part de la VA', valeur: A.pct(pire.part_va) },
             { nom: 'part du crédit', valeur: A.pct(pire.part_credit) },
             { nom: 'indice (IFR)', valeur: A.fmt(pire.ifr, 2) }
-          ]
+          ],
+          sources: [SRC.va, SRC.credit]
         };
       } },
 
@@ -264,7 +273,8 @@
             { nom: 'somme des excédents', valeur: A.mru(surplus) },
             { nom: 'encours ventilé', valeur: A.mru(sc.base_credit) },
             { nom: 'part à déplacer', valeur: A.pct(surplus / sc.base_credit) }
-          ]
+          ],
+          sources: [SRC.va, SRC.credit]
         };
       } },
 
@@ -276,7 +286,8 @@
             { nom: 'court terme, déc. 2020', valeur: A.pct(d.part_ct_dec2020 / 100) },
             { nom: 'court terme, 15 mois', valeur: A.signe(d.var_ct, 1) + A.NBSP + '%' },
             { nom: 'moyen-long terme, 15 mois', valeur: A.signe(d.var_mlt, 1) + A.NBSP + '%' }
-          ]
+          ],
+          sources: [SRC.credit]
         };
       } },
 
@@ -288,7 +299,8 @@
             { nom: 'non couvert', valeur: A.mru(c.non_couvert) },
             { nom: 'dont agro-pastoral', valeur: A.mru(c.agro_pastoral) },
             { nom: 'PIB au coût des facteurs', valeur: A.mru(c.pib_cout_facteurs) }
-          ]
+          ],
+          sources: [SRC.va]
         };
       } }
   ];
@@ -304,7 +316,7 @@
          ne laisserait qu'un éclair. Le clic rouvre la bulle et l'y laisse. */
       cible.addEventListener('click', function (ev) {
         var d = k.info(ev);
-        if (d) A.bulle.montrer(d.titre, d.lignes, ev.clientX, ev.clientY);
+        if (d) A.bulle.montrer(d.titre, d.lignes, ev.clientX, ev.clientY, d.sources);
       });
     });
 

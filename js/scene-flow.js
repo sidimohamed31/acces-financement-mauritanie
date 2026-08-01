@@ -15,6 +15,10 @@
   // et pas au chargement — sinon elle serait passée avant qu'on y arrive.
   var mEntree, aEntree;
 
+  // Libellés de provenance, produits par le pipeline : aucun nom de fichier
+  // n'est écrit ici, ils suivent DATA.meta.sources.
+  var SRC = window.DATA.meta.sources;
+
   /* Viseur commun aux deux séries temporelles : trait vertical + pastilles,
      une seule infobulle listant TOUTES les séries à cette abscisse. */
   function viseur(svg, opts) {
@@ -49,7 +53,7 @@
       });
       g.classList.add('actif');
       var d = opts.info(i);
-      A.bulle.montrer(d.titre, d.lignes, cx, cy);
+      A.bulle.montrer(d.titre, d.lignes, cx, cy, d.sources);
     }
 
     function depuisEvenement(ev) {
@@ -163,7 +167,8 @@
             { nom: 'moyen et long terme', valeur: A.fmt(m[i].mlt), couleur: '--immerge' },
             { nom: 'total', valeur: A.fmt(t) },
             { nom: 'part court terme', valeur: A.pct(m[i].ct / t) }
-          ]
+          ],
+          sources: [SRC.credit]
         };
       }
     });
@@ -260,7 +265,7 @@
         if (L[i].annee === 2014) {
           lignes.push({ nom: 'coopératives déclarées', valeur: A.fmt(L[i].coop_inst) + ' (rupture)' });
         }
-        return { titre: String(L[i].annee), lignes: lignes };
+        return { titre: String(L[i].annee), lignes: lignes, sources: [SRC.inclusion] };
       }
     });
   }

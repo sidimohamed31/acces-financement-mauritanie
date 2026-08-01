@@ -1,5 +1,31 @@
 # Plan de design
 
+> **Mise à jour 7 — chaque infobulle nomme son jeu de données.**
+> Un chiffre sans sa source est une affirmation. Les 28 cibles interactives
+> — 6 tuiles KPI, 22 marques dans les figures — portent désormais un pied
+> d'infobulle indiquant le ou les classeurs dont la valeur est tirée.
+>
+> | mesure | provenance |
+> |---|---|
+> | part de la VA, couverture du PIB | `Comptes Nationaux.xlsx` |
+> | part du crédit, maturité, ventilation | `Crédit bancaire.xlsx` |
+> | agences et institutions | `FINAN.xlsx` |
+> | **IFR, écart, réallocation** | **les deux premiers** — l'indice est un rapport entre eux, le taire serait mentir par omission |
+>
+> **Aucun nom de fichier n'est écrit dans le code d'affichage.** Les libellés
+> viennent de `DATA.meta.sources`, que le pipeline produit déjà : si une source
+> change dans les classeurs, les infobulles suivent sans qu'on y touche. Chaque
+> module de scène déclare `var SRC = window.DATA.meta.sources;` et rien d'autre.
+>
+> Le libellé a la forme `Fichier.xlsx — précision` ; l'infobulle le scinde et
+> pose le fichier en mono sur l'encre, la précision en dessous en `--brume`,
+> sous un filet. C'est une caution, pas une donnée de plus à lire — d'où le
+> corps réduit et le retrait de contraste.
+>
+> Contrôle : les 24 scénarios × 2 thèmes, **672 infobulles ouvertes**, chacune
+> devant nommer au moins une source, et une source figurant réellement dans
+> `DATA.meta.sources`.
+
 > **Mise à jour 6 — les chiffres montent, les figures se dessinent.**
 > Cinq primitives dans `lib.js` (`A.anim`), une seule règle : **l'animation
 > décore, elle ne porte jamais d'information.** Sous `prefers-reduced-motion`

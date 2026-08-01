@@ -20,6 +20,10 @@
   // viewBox calé sur la largeur de rendu réelle d'une demi-carte : à 1000 unités
   // affichées dans ~600 px, un libellé de 13 unités tombait à 8 px.
   var VB = { w: 700, h: 400, ml: 62, mr: 18, mt: 36, mb: 58 };
+
+  // Libellés de provenance, produits par le pipeline : aucun nom de fichier
+  // n'est écrit ici, ils suivent DATA.meta.sources.
+  var SRC = window.DATA.meta.sources;
   var PW = VB.w - VB.ml - VB.mr;
   var PH = VB.h - VB.mt - VB.mb;
   var Y0 = VB.mt + PH / 2;
@@ -81,7 +85,8 @@
             { nom: 'écart', valeur: A.signe(s.ecart_aff) + A.NBSP + 'MRU M',
               couleur: s.ecart >= 0 ? '--emerge' : '--immerge' },
             { nom: 'indice (IFR)', valeur: A.fmt(s.ifr, 2) }
-          ]
+          ],
+          sources: [SRC.va, SRC.credit]
         };
       });
     });
@@ -225,7 +230,8 @@
             { nom: 'part de la VA', valeur: A.pct(c.va) },
             { nom: 'part du crédit', valeur: A.pct(c.cr), couleur: '--immerge' },
             { nom: 'manque', valeur: A.pct(c.va - c.cr) }
-          ]
+          ],
+          sources: [SRC.va, SRC.credit]
         };
       });
     });

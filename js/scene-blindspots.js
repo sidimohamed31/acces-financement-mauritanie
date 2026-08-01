@@ -26,7 +26,14 @@
   // quand la carte entre dans le champ et pas au chargement.
   var entrees = {};
 
-  function donut(hoteFig, hoteLeg, titre, total, segments, centre) {
+  // Libellés de provenance, produits par le pipeline : aucun nom de fichier
+  // n'est écrit ici, ils suivent DATA.meta.sources.
+  var SRC = window.DATA.meta.sources;
+
+  /* `sources` : les deux anneaux n'ont pas le même dénominateur, donc pas la
+     même provenance — le PIB vient des comptes nationaux, l'encours du
+     classeur de crédit. Chaque appel apporte la sienne. */
+  function donut(hoteFig, hoteLeg, titre, total, segments, centre, sources) {
     var svg = A.scene(hoteFig, VB, titre,
       segments.map(function (s) {
         return s.nom + ' : ' + A.fmt(s.val) + ' MRU M, ' + A.pct(s.val / total);
@@ -63,7 +70,8 @@
             { nom: 'part du total', valeur: A.pct(part), couleur: s.absent ? '--absent' : '--connu' },
             { nom: 'montant', valeur: A.mru(s.val) },
             { nom: 'total', valeur: A.mru(total) }
-          ]
+          ],
+          sources: sources
         };
       });
       void halo;
@@ -175,14 +183,16 @@
     // Le centre AGRÈGE, la couronne DÉCOMPOSE : il porte le total non couvert,
     // que l'anneau ne montre que scindé en deux parts. Répéter une part déjà
     // étiquetée juste à côté n'apprendrait rien. Il doit tenir dans le trou (128 px).
-    ], { valeur: A.pct(c.non_couvert / c.pib_cout_facteurs), libelle: 'sans correspondance' });
+    ], { valeur: A.pct(c.non_couvert / c.pib_cout_facteurs), libelle: 'sans correspondance' },
+       [SRC.va]);
 
     entrees.credit = donut(fig2, leg2, 'Ventilation de l\'encours bancaire', cr.total, [
       { nom: 'ventilé par secteur', court: 'ventilé', val: cr.ventile },
       { nom: '« consommation et autres », non ventilé', court: 'non ventilé',
         val: cr.residu, absent: true }
     // Ici la couronne donne déjà les pourcentages : le centre apporte le montant.
-    ], { valeur: A.fmt(cr.residu), libelle: 'MRU M non ventilés' });
+    ], { valeur: A.fmt(cr.residu), libelle: 'MRU M non ventilés' },
+       [SRC.credit]);
 
     /* --- table de correspondance, branches orphelines en clair ------------ */
     var tb = document.createElement('tbody');

@@ -120,8 +120,12 @@ window.APP = window.APP || {};
     return boite;
   }
 
-  /* titre : string ; lignes : [{nom, valeur, couleur?}] */
-  function bulleMontrer(titre, lignes, x, y) {
+  /* titre : string ; lignes : [{nom, valeur, couleur?}]
+     sources : [string] — les libellés viennent de DATA.meta.sources, produits
+     par le pipeline. Aucun nom de fichier n'est retapé ici : si une source
+     change dans les classeurs, l'infobulle suit sans qu'on y touche.
+     Chaque libellé a la forme « Fichier.xlsx — précision ». */
+  function bulleMontrer(titre, lignes, x, y, sources) {
     var b = bulleInit();
     b.textContent = '';
 
@@ -145,6 +149,23 @@ window.APP = window.APP || {};
       dl.appendChild(dd);
     });
     b.appendChild(dl);
+
+    /* Provenance. Un chiffre sans son jeu de données est une affirmation :
+       chaque infobulle nomme le ou les classeurs dont sa valeur est tirée. */
+    if (sources && sources.length) {
+      var s = document.createElement('div');
+      s.className = 'prov';
+      sources.forEach(function (txt) {
+        var l = document.createElement('div');
+        var coupe = String(txt).split(' — ');
+        var f = document.createElement('b');
+        f.textContent = coupe[0];
+        l.appendChild(f);
+        if (coupe[1]) l.appendChild(document.createTextNode(coupe[1]));
+        s.appendChild(l);
+      });
+      b.appendChild(s);
+    }
 
     b.classList.add('visible');
     bullePlacer(x, y);
@@ -173,7 +194,7 @@ window.APP = window.APP || {};
       var y = ev && ev.clientY !== undefined ? ev.clientY : r.top + r.height / 2;
       var d = donne(ev);
       if (!d) return bulleCacher();
-      bulleMontrer(d.titre, d.lignes, x, y);
+      bulleMontrer(d.titre, d.lignes, x, y, d.sources);
     };
     cible.addEventListener('pointerenter', maj);
     cible.addEventListener('pointermove', maj);
