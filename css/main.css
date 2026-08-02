@@ -156,7 +156,10 @@ p { margin: 0; }
 
 .kpis {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(min(100%, 180px), 1fr));
+  /* 158 px et non 180 : à 180, la septième tuile passait seule à la ligne
+     sur un écran de 1366. À 158 les sept tiennent dès 1280, et en dessous la
+     bande se replie en 4 + 3 plutôt qu'en 6 + 1. */
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 158px), 1fr));
   gap: clamp(0.6rem, 1.2vw, 1rem);
   margin-bottom: clamp(0.9rem, 1.8vw, 1.35rem);
 }

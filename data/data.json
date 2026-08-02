@@ -1,6 +1,6 @@
 {
  "meta": {
-  "genere": "2026-08-01 13:18 UTC",
+  "genere": "2026-08-02 00:11 UTC",
   "annee_defaut": 2017,
   "annees": [
    2015,
@@ -15,8 +15,72 @@
   "sources": {
    "va": "Comptes Nationaux.xlsx — VA par branche, 2005-2017",
    "credit": "Crédit bancaire.xlsx — encours CT/MLT 2020-2021 et ventilation sectorielle",
-   "inclusion": "FINAN.xlsx — institutions et agences, 2004-2019"
+   "inclusion": "FINAN.xlsx — institutions et agences, 2004-2019",
+   "population": "Population.xlsx — population par wilaya, 2013-2019"
   }
+ },
+ "population": {
+  "annee": 2019,
+  "total": 4077347,
+  "ecart_arrondi": 1,
+  "wilayas": [
+   {
+    "nom": "Nouakchott",
+    "hab": 1195636
+   },
+   {
+    "nom": "El Hodh El Charghi",
+    "hab": 502594
+   },
+   {
+    "nom": "Assaba",
+    "hab": 377656
+   },
+   {
+    "nom": "Gorgol",
+    "hab": 369892
+   },
+   {
+    "nom": "Brakna",
+    "hab": 326083
+   },
+   {
+    "nom": "El Hodh El Gharbi",
+    "hab": 324165
+   },
+   {
+    "nom": "Guidimakha",
+    "hab": 308457
+   },
+   {
+    "nom": "Trarza",
+    "hab": 301060
+   },
+   {
+    "nom": "D. Nouadhibou",
+    "hab": 145939
+   },
+   {
+    "nom": "Tagant",
+    "hab": 83976
+   },
+   {
+    "nom": "Adrar",
+    "hab": 61052
+   },
+   {
+    "nom": "Tiris Zemour",
+    "hab": 56413
+   },
+   {
+    "nom": "Inchiri",
+    "hab": 24425
+   }
+  ],
+  "agences_banques": 291,
+  "agences_toutes": 424,
+  "densite_banques": 7.137,
+  "densite_toutes": 10.3989
  },
  "credit": {
   "total": 75146.23,
@@ -1172,7 +1236,7 @@
   }
  ],
  "controles": {
-  "total": 142,
-  "reussis": 142
+  "total": 148,
+  "reussis": 148
  }
 }
