@@ -131,9 +131,6 @@
     A.anim.nombre($('k-conc'), surplus / sc.base_credit, A.pct, duree);
     A.anim.nombre($('k-ct'), D.maturite.part_ct_dec2020 / 100, A.pct, duree);
     A.anim.nombre($('k-void'), c.non_couvert / c.pib_cout_facteurs, A.pct, duree);
-    // Densité : ne dépend d'aucun scénario, mais compte comme les autres.
-    A.anim.nombre($('k-dens'), D.population.densite_banques,
-      function (v) { return A.fmt(v, 1); }, duree);
     premierRendu = false;
 
     // --- lignes de lecture, une phrase chiffrée par carte -------------------
@@ -304,25 +301,6 @@
             { nom: 'PIB au coût des facteurs', valeur: A.mru(c.pib_cout_facteurs) }
           ],
           sources: [SRC.va]
-        };
-      } },
-
-    /* Densité d'agences. Le numérateur vient de FINAN, le dénominateur de
-       Population : deux sources croisées, donc les deux sont nommées. On
-       montre aussi le total toutes institutions — les banques seules ne
-       disent pas la même chose que l'ensemble des points de service. */
-    { id: 'k-dens', info: function () {
-        var p = D.population;
-        return {
-          titre: 'Maillage financier, ' + p.annee,
-          lignes: [
-            { nom: 'agences bancaires', valeur: A.fmt(p.agences_banques) },
-            { nom: 'toutes institutions', valeur: A.fmt(p.agences_toutes) },
-            { nom: 'population', valeur: A.fmt(p.total) + ' hab.' },
-            { nom: 'banques / 100 000 hab.', valeur: A.fmt(p.densite_banques, 1) },
-            { nom: 'toutes / 100 000 hab.', valeur: A.fmt(p.densite_toutes, 1) }
-          ],
-          sources: [SRC.inclusion, SRC.population]
         };
       } }
   ];

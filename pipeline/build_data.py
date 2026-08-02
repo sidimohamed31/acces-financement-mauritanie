@@ -183,63 +183,6 @@ def lire_finan():
     return lignes
 
 
-def lire_population():
-    """Population.xlsx, feuille 'Data'.
-
-    Ligne 2 = total national. Lignes 3 a 15 = les 13 wilayas. Les lignes 16 a
-    18 (Nouakchott Nord / Ouest / Sud) ne sont renseignees QU'EN 2013 : elles
-    decomposent Nouakchott, deja compte ligne 15, et les additionner
-    doublerait la capitale. On les ecarte explicitement.
-    """
-    ws = openpyxl.load_workbook(os.path.join(RAW, "Population.xlsx"), data_only=True)["Data"]
-
-    entete0 = str(ws.cell(1, 1).value or "").strip().lower()
-    assert entete0 == "region", (
-        "La colonne A de Population.xlsx ne porte plus 'Region' : verifier la "
-        "structure avant de s'y fier, en-tete lu = %r" % ws.cell(1, 1).value)
-
-    # Reperage de la colonne 2019 par son en-tete, jamais par sa position.
-    col_annee = {}
-    for c in range(2, ws.max_column + 1):
-        v = ws.cell(1, c).value
-        if v not in (None, ""):
-            col_annee[int(v)] = c
-    assert 2019 in col_annee, "Population.xlsx : pas de colonne 2019 (%r)" % sorted(col_annee)
-    c19 = col_annee[2019]
-
-    national = ws.cell(2, c19).value
-    assert str(ws.cell(2, 1).value).strip().lower() == "mauritania", (
-        "La ligne 2 de Population.xlsx n'est plus le total national : %r" % ws.cell(2, 1).value)
-
-    ecartees = {"nouakchott north", "nouakchott west", "nouakchott south"}
-    wilayas = []
-    for r in range(3, ws.max_row + 1):
-        nom = ws.cell(r, 1).value
-        if nom in (None, ""):
-            continue
-        if str(nom).strip().lower() in ecartees:
-            continue
-        hab = ws.cell(r, c19).value
-        if hab in (None, ""):
-            continue
-        wilayas.append({"nom": str(nom).strip(), "hab": int(hab)})
-
-    check_eq("nombre de wilayas", len(wilayas), 13)
-
-    # La somme des wilayas ne retombe pas EXACTEMENT sur le total publie : la
-    # source arrondit chaque region separement. On borne l'ecart au lieu de le
-    # masquer — au-dela de 10 habitants, c'est une erreur de lecture, pas un arrondi.
-    somme = sum(w["hab"] for w in wilayas)
-    ecart = abs(somme - int(national))
-    assert ecart <= 10, (
-        "Somme des wilayas %d vs total national %d : ecart de %d, trop grand "
-        "pour un arrondi de source." % (somme, int(national), ecart))
-
-    return {"annee": 2019, "total": int(national), "somme_wilayas": somme,
-            "ecart_arrondi": somme - int(national),
-            "wilayas": sorted(wilayas, key=lambda w: -w["hab"])}
-
-
 # --------------------------------------------------------------------------
 # 5. scenarios
 # --------------------------------------------------------------------------
@@ -307,22 +250,6 @@ def main():
     comptes, entetes = lire_comptes()
     bloc_a, postes_credit, residu, total_credit, ct_total, mlt_total = lire_credit()
     finan = lire_finan()
-    pop = lire_population()
-
-    # --- densite d'agences ------------------------------------------------------
-    # Deux numerateurs, un seul denominateur. Les banques seules ne disent pas
-    # la meme chose que l'ensemble des points de service : on publie les deux
-    # plutot que de choisir celui qui arrange.
-    f19 = [r for r in finan if r["annee"] == 2019][0]
-    check_eq("annee de population alignee sur FINAN", pop["annee"], f19["annee"])
-    ag_banques = f19["banques_agences"]
-    ag_toutes = ag_banques + (f19["coop_agences"] or 0) + (f19["imf_agences"] or 0)
-    dens_banques = ag_banques / pop["total"] * 100000
-    dens_toutes = ag_toutes / pop["total"] * 100000
-    check("agences bancaires 2019", ag_banques, 291)
-    check("agences toutes institutions 2019", ag_toutes, 424)
-    check("densite bancaire pour 100 000 hab", dens_banques, 7.137, tol=0.001)
-    check("densite toutes institutions pour 100 000 hab", dens_toutes, 10.399, tol=0.001)
 
     # --- coherence des sources -------------------------------------------------
     va2017 = comptes[2017]
@@ -441,21 +368,7 @@ def main():
                 "va": "Comptes Nationaux.xlsx — VA par branche, 2005-2017",
                 "credit": "Crédit bancaire.xlsx — encours CT/MLT 2020-2021 et ventilation sectorielle",
                 "inclusion": "FINAN.xlsx — institutions et agences, 2004-2019",
-                "population": "Population.xlsx — population par wilaya, 2013-2019",
             },
-        },
-        "population": {
-            "annee": pop["annee"],
-            "total": pop["total"],
-            "ecart_arrondi": pop["ecart_arrondi"],
-            "wilayas": pop["wilayas"],
-            # Densites calculees ici, jamais dans la page : le numerateur vient
-            # de FINAN, le denominateur de Population, et croiser deux sources
-            # est un travail de pipeline, pas d'affichage.
-            "agences_banques": ag_banques,
-            "agences_toutes": ag_toutes,
-            "densite_banques": round(dens_banques, 4),
-            "densite_toutes": round(dens_toutes, 4),
         },
         "credit": {
             "total": round(total_credit, 2),
